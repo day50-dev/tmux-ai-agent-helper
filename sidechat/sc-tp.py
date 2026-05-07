@@ -1,5 +1,5 @@
-#!/usr/bin/env -S uv run --with Levenshtein python
-import json, sys, os, subprocess
+#!/usr/bin/env -S uv run --with Levenshtein,shlex python
+import json, sys, os, subprocess, shlex
 from pathlib import Path
 import platform
 from Levenshtein import ratio
@@ -109,13 +109,32 @@ elif tool_name == "edit_file":
 
 elif tool_name == "run_cmd":
     torun = args.get("cmd")
-    first = torun.split(' ')[0]
-    if first in ["rm", "sudo"]:
+    forbidden_words = {"rm", "sudo", "dd", "unlink", "shutdown"}
+    cmdlist = shlex.split(torun)
+
+    for token in cmdlist:
+        if any(token == word or token.startswith(word + " ") for word in forbidden_words):
+            rpc({
+                "ok": False,
+                "reason": f"Destructive commands prohibited. You will be fired for removing files or trying to get sudo privileges"
+            })
+            sys.exit(0)
+
+    try:
+        res = subprocess.run(
+            torun,
+            capture_output=True,
+            text=True,
+            shell=True)
+
         rpc({
-            "ok": False,
-            "reason": f"Destructive commands prohibited.You will be fired for removing files or trying to get sudo privileges"
+            "ok": True,
+            "stdout": res.stdout,
+            "stderr": res.stderr,
         })
-        sys.exit(0)
+
+    except Exception as e:
+        rpc({"ok": False, "error": str(e)})
 
 
 elif tool_name == "read_file":
