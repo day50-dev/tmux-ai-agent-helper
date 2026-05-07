@@ -2,6 +2,7 @@
 # This is an OS X install-time hack
 #@@INJECTPATH
 
+TIMEOUT=20
 VERSION="@@VERSION"
 _uname="$(uname)"
 
@@ -21,6 +22,9 @@ MDIR="$MDIR/$UID"
 [[ -d "$MDIR" ]] || mkdir "$MDIR"
 MDREAD='sd -c <(echo -e "[style]\nMargin = 4")'
 
+load_pref() {
+    [[ -e "$SETTINGS" ]] && source "$SETTINGS"
+}
 clean() {
     tput cnorm
 }

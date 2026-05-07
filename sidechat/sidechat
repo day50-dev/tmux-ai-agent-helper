@@ -14,7 +14,6 @@ LAUNCH="$0"
 RETRY=
 NEWCONVO=
 CANTOOLS=0
-TIMEOUT=20
 DRY=
 UNIQ=cat
 
@@ -166,10 +165,6 @@ flash() {
 
 retry() {
     RETRY=1
-}
-
-load_pref() {
-    [[ -e "$SETTINGS" ]] && source "$SETTINGS"
 }
 
 save_pref() {
