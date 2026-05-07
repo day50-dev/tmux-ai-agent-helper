@@ -31,4 +31,4 @@ echo -e "\nAdding to $convo_id"
     # This takes a potential file passed in sc-add and cats it
     [[ -r "$1" ]] && cat "$1" 
     echo "</output>"
-} | llc "Acknowlege in 1 paragraph" 2> >(jq . >&2) | sd
+} | llc "Acknowlege in 1 paragraph" | sd
