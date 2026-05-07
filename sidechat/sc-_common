@@ -43,8 +43,8 @@ ll() {
     [[ -n "$DRY" ]] && dry="--curlify"
 
     llcat $dry -c "$convo_id" "${tool[@]}" --timeout $TIMEOUT \
-        -bq result -u "$SERVER_URL" "${system[@]}" \
-	    -sk "$(head -1 $SERVER_AUTH)" "$@" 2> >(cat >&2) 
+        -m "$LLM_MODEL" -bq result -u "$SERVER_URL" "${system[@]}" \
+	      -sk "$(head -1 $SERVER_AUTH)" "$@" 2> >(cat >&2) 
 }
 
 
