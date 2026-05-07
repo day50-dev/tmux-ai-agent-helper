@@ -29,6 +29,25 @@ clean() {
     tput cnorm
 }
 
+ll() {
+    local tool=()
+    local system=()
+    local dry=
+    [[ "$TOOLS" == "ON" && "$CANTOOLS" == "0" ]] && tool=( "-tf" "$DIR/sc-tf.json" "-tp" "$DIR/sc-tp.py" "-mf" "$CONFIG/mcp.json" )
+
+    if [[ -n "$NEWCONVO" ]]; then
+        system=("-s" "$SYSTEM")
+        NEWCONVO=
+    fi
+
+    [[ -n "$DRY" ]] && dry="--curlify"
+
+    llcat $dry -c "$convo_id" "${tool[@]}" --timeout $TIMEOUT \
+        -bq result -u "$SERVER_URL" "${system[@]}" \
+	    -sk "$(head -1 $SERVER_AUTH)" "$@" 2> >(cat >&2) 
+}
+
+
 spinner() {
     set +x
     tput civis
