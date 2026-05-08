@@ -381,7 +381,7 @@ toolhack() {
     if [[ "$CANTOOLS" == 1 && "$TOOLS" == "ON" ]]; then
         echo ' * No formal toolcall support. Using the hack! ' | $MDREAD
         sys_prompt
-        save_pref TOOLS "OFF"
+        save_pref TOOLS "ON"
         SYSTEM+=". IMPORTANT: To call tools Respond only with the json '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"<insert function name>\",\"arguments\":{<insert paramaters here>}}}'. You will get the response in the reply. Here are the tools you can call $(jq -r '.[].function' "$DIR/sc-tf.json" | tr "\n" " " | sed -E "s/\s+/ /g")"
         # force system-prompt re-injection
         NEWCONVO=1

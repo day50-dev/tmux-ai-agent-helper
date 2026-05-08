@@ -1,4 +1,4 @@
-#!/usr/bin/env -S uv run --with Levenshtein,shlex python
+#!/usr/bin/env -S uv run --with Levenshtein python
 import json, sys, os, subprocess, shlex
 from pathlib import Path
 import platform
