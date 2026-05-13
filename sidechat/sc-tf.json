@@ -18,6 +18,22 @@
   {
     "type": "function",
     "function": {
+      "name": "run_bash_command",
+      "description": "run a command in bash",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cmd": {
+            "type": "string",
+            "description": "The command line to run"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
       "name": "create_file",
       "description": "Create a file at a given path",
       "parameters": {

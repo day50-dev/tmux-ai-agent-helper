@@ -107,7 +107,7 @@ elif tool_name == "edit_file":
             "path": str(file_path)
         })
 
-elif tool_name == "run_cmd":
+elif tool_name == "run_bash_command":
     torun = args.get("cmd")
     forbidden_words = {"rm", "sudo", "dd", "unlink", "shutdown"}
     cmdlist = shlex.split(torun)
