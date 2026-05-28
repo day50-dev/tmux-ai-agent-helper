@@ -29,6 +29,10 @@ clean() {
     tput cnorm
 }
 
+llarg() {
+    llcat --timeout $TIMEOUT -bq result -u "$SERVER_URL" -sk @$SERVER_AUTH "$@"
+}
+
 ll() {
     local tool=()
     local system=()
@@ -44,7 +48,7 @@ ll() {
 
     sc_pane="${pane_list[0]}" llcat $dry -c "$convo_id" "${tool[@]}" --timeout $TIMEOUT \
         -m "$LLM_MODEL" -bq result -u "$SERVER_URL" "${system[@]}" \
-	      -sk "$(head -1 $SERVER_AUTH)" "$@" 2> >(cat >&2) 
+	    -sk @"$SERVER_AUTH" "$@" 2> >(cat >&2) 
 }
 
 spinner() {

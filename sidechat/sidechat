@@ -265,7 +265,7 @@ model() {
         chosen="$1"
     else
         [[ -z "$INTMUX" ]] && _fzf=fzf
-        chosen=$(ll -m | sort | $_fzf )
+        chosen=$(llarg -m | sort | $_fzf )
     fi    
 
     if [[ -n "$chosen" ]]; then
@@ -277,14 +277,14 @@ model() {
       if ! grep "$LLM_MODEL" "$CONFIG/servers.txt" | grep -c $SERVER_URL > /dev/null; then
           perl -i -pe "s^($SERVER_URL.*)^\$1 $LLM_MODEL^g" "$CONFIG/servers.txt"
       fi
-      
-      echo " * Checking for tool support..." | $MDREAD
-      [[ -z "$LLM_MODEL" ]] && { _warn "Model unset"; return; }
+     
+      #echo " * Checking for tool support..." | $MDREAD
+      #[[ -z "$LLM_MODEL" ]] && { _warn "Model unset"; return; }
 
-      llcat -u "$SERVER_URL" -m "$LLM_MODEL" --info | grep tool > /dev/null
-      CANTOOLS=$?
-      save_pref CANTOOLS "$CANTOOLS"
-      toolhack
+      #llcat -u "$SERVER_URL" -m "$LLM_MODEL" --info | grep tool > /dev/null
+      #CANTOOLS=$?
+      #save_pref CANTOOLS "$CANTOOLS"
+      #toolhack
     fi
 }
 
