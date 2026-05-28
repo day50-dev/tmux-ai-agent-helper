@@ -11,7 +11,6 @@ if platform.system() == "Darwin":
 memfile=Path(f"~/{CONFIG}/sidechat").expanduser() / "memories.json"
 
 def run(what):
-    print("running: ", what)
     return subprocess.run(
         what,
         stdout=subprocess.PIPE,
@@ -61,11 +60,23 @@ elif tool_name == "run_command":
     # this is a magical thing that is passed in from bash
     pane = os.environ.get('sc_pane')
     tosend = []
-    for p in args.get('cmd').split('\n'):
-        tosend += [p, "Enter"]
+    if 'capture-pane' in args.get('cmd'):
+        rpc(run(["tmux", "capture-pane", "-t", pane, "-p"]).stdout)
 
-    run(["tmux", "send-keys", "-t", pane] + tosend)
-    rpc(run(["tmux", "capture-pane", "-t", pane, "-p"]).stdout)
+    elif 'tmux send' in args.get('cmd'):
+        rpc({
+            "ok": False,
+            "reason": "FATAL! YOU MUST NOT SEND TMUX COMMANDS! THAT IS HANDLED AUTOMATICALLY! ONLY SEND THE BASH COMMAND YOU WANT TO RUN! DO NOT SEND THE TMUX COMMAND OR YOU WILL BE FIRED! FAILURE! NO COMMAND RUN",
+            "error": "FATAL! Failed to follow instructions",
+            "commands-run": "Nothing",
+            "resolution": "FOLLOW INSTRUCTIONS and try again"
+        })
+    else:
+        for p in args.get('cmd').split('\n'):
+            tosend += [p, "Enter"]
+
+        run(["tmux", "send-keys", "-t", pane] + tosend)
+        rpc(run(["tmux", "capture-pane", "-t", pane, "-p"]).stdout)
 
 elif tool_name == "edit_file":
     file_path = Path(args.get('path') or '.').expanduser() 

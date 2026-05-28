@@ -285,6 +285,7 @@ model() {
       #CANTOOLS=$?
       #save_pref CANTOOLS "$CANTOOLS"
       #toolhack
+      CANTOOLS=0
     fi
 }
 
@@ -558,7 +559,7 @@ emit_capture() {
     [[ -n "$INTMUX" && -s "$MDIR/${ix_pane}.new" ]] && _pid=$(tmux display -pt "$ix" '#{pane_pid}')
 
     if [[ "$_uname" == "Linux" && -n "$INTMUX" ]]; then
-        echo "<ps hierarchy>$(ps -o comm= --ppid $_pid -p $_pid | tr '\n' ' ')</ps hierarchy>"
+        echo "<ps hierarchy>IMPORTANT: This is what is currently running: $(ps -o comm= --ppid $_pid -p $_pid | tr '\n' ' '). YOU DO NOT NEED TO RUN IT AGAIN, IT IS ALREADY RUNNING.</ps hierarchy>"
     fi
     echo "<capture>"
     cat "$MDIR/${ix}.new"
