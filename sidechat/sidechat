@@ -270,7 +270,7 @@ model() {
         chosen="$1"
     else
         [[ -z "$INTMUX" ]] && _fzf=fzf
-        chosen=$(ll -m | sort | $_fzf )
+        chosen=$(llarg -m | sort | $_fzf )
     fi    
 
     if [[ -n "$chosen" ]]; then
@@ -282,14 +282,15 @@ model() {
       if ! grep "$LLM_MODEL" "$CONFIG/servers.txt" | grep -c $SERVER_URL > /dev/null; then
           perl -i -pe "s^($SERVER_URL.*)^\$1 $LLM_MODEL^g" "$CONFIG/servers.txt"
       fi
-      
-      echo " * Checking for tool support..." | $MDREAD
-      [[ -z "$LLM_MODEL" ]] && { _warn "Model unset"; return; }
+     
+      #echo " * Checking for tool support..." | $MDREAD
+      #[[ -z "$LLM_MODEL" ]] && { _warn "Model unset"; return; }
 
-      llcat -u "$SERVER_URL" -m "$LLM_MODEL" --info | grep tool > /dev/null
-      CANTOOLS=$?
-      save_pref CANTOOLS "$CANTOOLS"
-      toolhack
+      #llcat -u "$SERVER_URL" -m "$LLM_MODEL" --info | grep tool > /dev/null
+      #CANTOOLS=$?
+      #save_pref CANTOOLS "$CANTOOLS"
+      #toolhack
+      CANTOOLS=0
     fi
 }
 
@@ -330,10 +331,12 @@ choose() {
     [[ "$depth" == 0 ]] && echo "Select panes or any other key to end selection" | $MDREAD
     [[ -z "$INTMUX" ]] && return
     tmux display-panes -d 0 "run-shell 'echo %% > $MDIR/pane-id'"
+
     if [[ $? == "1" ]] ; then
         echo "Exiting due to possible infinite loop."
         exit 1
     fi
+
     if [[ -e "$MDIR/pane-id" ]]; then 
         pane_id=$(cat "$MDIR/pane-id")
         [[ "$depth" == 0 ]] && pane_list=( )
@@ -408,6 +411,7 @@ last() {
         jq -r '.[] | "\n**\(.role)**: \(.content)"' $convo_id | tail -$amount; 
     } | $MDREAD
 }
+
 llc() {
     ll -m "$LLM_MODEL" "$@"
 }
@@ -560,7 +564,7 @@ emit_capture() {
     [[ -n "$INTMUX" && -s "$MDIR/${ix_pane}.new" ]] && _pid=$(tmux display -pt "$ix" '#{pane_pid}')
 
     if [[ "$_uname" == "Linux" && -n "$INTMUX" ]]; then
-        echo "<ps hierarchy>$(ps -o comm= --ppid $_pid -p $_pid | tr '\n' ' ')</ps hierarchy>"
+        echo "<ps hierarchy>IMPORTANT: This is what is currently running: $(ps -o comm= --ppid $_pid -p $_pid | tr '\n' ' '). YOU DO NOT NEED TO RUN IT AGAIN, IT IS ALREADY RUNNING.</ps hierarchy>"
     fi
     echo "<capture>"
     cat "$MDIR/${ix}.new"

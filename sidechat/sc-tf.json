@@ -2,6 +2,22 @@
   {
     "type": "function",
     "function": {
+      "name": "run_command",
+      "description": "Run command, this is what you should try first. IMPORTANT: Specify just the command, tmux routing is handled automatically! ONLY the command at the bash prompt. If you are logged in, no ssh is needed. NOTHING extra.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cmd": {
+            "type": "string",
+            "description": "Just the command you wish to run, tmux routing is already handled!"
+          }
+        }
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
       "name": "list_files",
       "description": "List files in a given path",
       "parameters": {
@@ -19,7 +35,7 @@
     "type": "function",
     "function": {
       "name": "run_bash_command",
-      "description": "run a command in bash",
+      "description": "run a command in bash - only do this if run_cmd fails",
       "parameters": {
         "type": "object",
         "properties": {

@@ -29,11 +29,15 @@ clean() {
     tput cnorm
 }
 
+llarg() {
+    llcat --timeout $TIMEOUT -bq result -u "$SERVER_URL" -sk @$SERVER_AUTH "$@"
+}
+
 ll() {
     local tool=()
     local system=()
     local dry=
-    [[ "$TOOLS" == "ON" && "$CANTOOLS" == "0" ]] && tool=( "-tf" "$DIR/sc-tf.json" "-tp" "$DIR/sc-tp.py" "-mf" "$CONFIG/mcp.json" )
+    [[ "$TOOLS" == "ON" ]] && tool=( "-tf" "$DIR/sc-tf.json" "-tp" "$DIR/sc-tp.py" "-mf" "$CONFIG/mcp.json" )
 
     if [[ -n "$NEWCONVO" ]]; then
         system=("-s" "$SYSTEM")
@@ -42,11 +46,10 @@ ll() {
 
     [[ -n "$DRY" ]] && dry="--curlify"
 
-    llcat $dry -c "$convo_id" "${tool[@]}" --timeout $TIMEOUT \
+    sc_pane="${pane_list[0]}" llcat $dry -c "$convo_id" "${tool[@]}" --timeout $TIMEOUT \
         -m "$LLM_MODEL" -bq result -u "$SERVER_URL" "${system[@]}" \
-	      -sk "$(head -1 $SERVER_AUTH)" "$@" 2> >(cat >&2) 
+	    -sk @"$SERVER_AUTH" "$@" 2> >(cat >&2) 
 }
-
 
 spinner() {
     set +x

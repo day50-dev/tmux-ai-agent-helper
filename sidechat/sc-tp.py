@@ -10,6 +10,15 @@ if platform.system() == "Darwin":
 
 memfile=Path(f"~/{CONFIG}/sidechat").expanduser() / "memories.json"
 
+def run(what):
+    return subprocess.run(
+        what,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        check=False      
+    )
+
 def rpc(data):
     print(json.dumps({"jsonrpc": "2.0", "result": data}), flush=True)
 
@@ -46,6 +55,28 @@ elif tool_name == "create_file":
 
     fd = os.open(file_path, os.O_CREAT | os.O_WRONLY)
     rpc({"ok": True, "message": f"File created: {file_path}"})
+
+elif tool_name == "run_command":
+    # this is a magical thing that is passed in from bash
+    pane = os.environ.get('sc_pane')
+    tosend = []
+    if 'capture-pane' in args.get('cmd'):
+        rpc(run(["tmux", "capture-pane", "-t", pane, "-p"]).stdout)
+
+    elif 'tmux send' in args.get('cmd'):
+        rpc({
+            "ok": False,
+            "reason": "FATAL! YOU MUST NOT SEND TMUX COMMANDS! THAT IS HANDLED AUTOMATICALLY! ONLY SEND THE BASH COMMAND YOU WANT TO RUN! DO NOT SEND THE TMUX COMMAND OR YOU WILL BE FIRED! FAILURE! NO COMMAND RUN",
+            "error": "FATAL! Failed to follow instructions",
+            "commands-run": "Nothing",
+            "resolution": "FOLLOW INSTRUCTIONS and try again"
+        })
+    else:
+        for p in args.get('cmd').split('\n'):
+            tosend += [p, "Enter"]
+
+        run(["tmux", "send-keys", "-t", pane] + tosend)
+        rpc(run(["tmux", "capture-pane", "-t", pane, "-p"]).stdout)
 
 elif tool_name == "edit_file":
     file_path = Path(args.get('path') or '.').expanduser() 
@@ -180,22 +211,10 @@ elif tool_name == "read_file":
         })
 
 elif tool_name == "read_pydoc":
-    rpc(subprocess.run(
-        ["pydoc", args['object']],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        check=False      
-    ).stdout)
+    rpc(run(["pydoc", args['object']]).stdout)
 
 elif tool_name == "read_man_section":
-    rpc(subprocess.run(
-        ["mansnip", "--llm", args['manpage'], args['section']],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        check=False      
-    ).stdout)
+    rpc(run(["mansnip", "--llm", args['manpage'], args['section']]).stdout)
 
 elif "memory" in tool_name:
     fd = os.open(memfile, os.O_RDONLY | os.O_CREAT, mode=0o644)
