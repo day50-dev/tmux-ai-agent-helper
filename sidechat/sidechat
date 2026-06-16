@@ -41,10 +41,10 @@ show_params() {
     if [[ "$#" -gt 0 && "$1" == "panes" ]]; then
         return
     fi
-    echo -n "  * **Model**:  ${LLM_MODEL:-*(None Set)*}"
+    echo -n "  * **Model**:  ${LLM_MODEL:-*(None)*}"
     [[ "$TOOLS" == "ON" ]] && echo " 🛠" || echo ""
 
-    echo "  * **Server**: ${SERVER_URL:-*(Needs to be configured)*} (${TIMEOUT}s)"
+    echo "  * **Server**: ${SERVER_URL:-*(None)*} (${TIMEOUT}s)"
     echo "  * **Keyfile**: ${SERVER_AUTH:-*(None)*}"
 
     local size="$(stat $msize "$convo_id")"
@@ -199,7 +199,7 @@ server() {
         {
             echo -e "The server URL:\n"
             echo " * Should include the schema, such as \`http://\` or \`https://\`"
-            echo " * Be OpenAI compatible (e.g., litellm/llama.cpp/ollama/openrouter/etc)"
+            echo " * Be OpenAI compatible (e.g., LiteLLM/llama.cpp/Ollama/OpenRouter/etc)"
             echo " * Can be some special values: "
             echo "   * \`[MAS format](https://day50.dev/mas.html)\` - http://(host)#m=(model)"
             echo "   * \`prev\`   - choose from prior servers"
