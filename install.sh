@@ -92,11 +92,13 @@ else
     binpath="$insdir"
 fi
 
-if [[ $(uname) == "Darwin" ]]; then
-    sed -i "" "s^#@@INJECTPATH^PATH=\$PATH:$binpath^g" "$insdir/sc-_common"
-    sed -i "" "s^@@VERSION^$(cd $DIR;git describe)^g" "$insdir/sc-_common"
-else
-    sed -i "s/@@VERSION/$(cd $DIR;git describe)/g" "$insdir/sc-_common"
+if command -v git > /dev/null; then
+    if [[ $(uname) == "Darwin" ]]; then
+        sed -i "" "s^#@@INJECTPATH^PATH=\$PATH:$binpath^g" "$insdir/sc-_common"
+        sed -i "" "s^@@VERSION^$(cd $DIR;git describe)^g" "$insdir/sc-_common"
+    else
+        sed -i "s/@@VERSION/$(cd $DIR;git describe)/g" "$insdir/sc-_common"
+    fi
 fi
 
 if ! echo $PATH | grep "$binpath" > /dev/null; then
