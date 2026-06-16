@@ -13,7 +13,7 @@ cat << ENDL
                                                                           
 ENDL
 insdir=$(mktemp -d)
-if ! command -v lgit > /dev/null; then
+if ! command -v git > /dev/null; then
     curl -Ls https://github.com/day50-dev/tmux-ai-agent-helper/archive/refs/heads/main.zip -o $insdir/main.zip
     cd $insdir && unzip main.zip
     cd tmux-ai-agent-helper-main/ && ./install.sh
