@@ -1,8 +1,18 @@
-#!/usr/bin/env -S uv run --with Levenshtein python
+#!/usr/bin/env python 
 import json, sys, os, subprocess, shlex
 from pathlib import Path
 import platform
-from Levenshtein import ratio
+def _levenshtein_ratio(s1, s2):
+    n, m = len(s1), len(s2)
+    if n < m:
+        s1, s2, n, m = s2, s1, m, n
+    prev = list(range(m + 1))
+    for i, c1 in enumerate(s1):
+        curr = [i + 1]
+        for j, c2 in enumerate(s2):
+            curr.append(prev[j] if c1 == c2 else 1 + min(curr[-1], prev[j], prev[j + 1]))
+        prev = curr
+    return (n + m - prev[-1]) / (n + m) if (n + m) else 1.0
 
 CONFIG=".config"
 if platform.system() == "Darwin":
@@ -100,7 +110,7 @@ elif tool_name == "edit_file":
         # Get the actual content being edited
         lines_in_range = ''.join(lines[line_start - 1:line_end])
 
-        similarity = ratio(lines_in_range, old_content)
+        similarity = _levenshtein_ratio(lines_in_range, old_content)
         
         # Verify content matches (sanity check)
         if similarity < 0.8:
